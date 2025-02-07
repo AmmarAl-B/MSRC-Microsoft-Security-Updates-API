@@ -82,7 +82,7 @@ Process {
             }
         }
         catch {
-            Write-Error "Error during Get-MsrcDownloadDialog: $($_.Exception.Message)"
+            Write-Error "Error during Get-MsrcDownload: $($_.Exception.Message)"
             Write-Error -Message "HTTP Get failed for catalog retrieval with status code $($_.Exception.Response.StatusCode): $($_.Exception.Response.StatusDescription)"
         }
     }
