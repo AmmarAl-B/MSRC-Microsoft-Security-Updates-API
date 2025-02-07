@@ -80,17 +80,11 @@ RequiredAssemblies = @(
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 # FunctionsToExport = '*'
 FunctionsToExport = @(
-    'Get-KBDownloadUrl',
     'Get-MsrcCvrfAffectedSoftware',
-    'Get-MsrcCvrfCVESummary',
     'Get-MsrcCvrfDocument',
-    'Get-MsrcCvrfExploitabilityIndex',
     'Get-MsrcDownload',
-    'Get-MsrcDownloadDialog'
-    'Get-AllCookiesFromWebRequestSession'
-    'Get-MsrcSecurityBulletinHtml',
+    'Get-MsrcDownloadDialog',
     'Get-MsrcSecurityUpdate',
-    'Get-MsrcVulnerabilityReportHtml',
     'Set-MSRCAdalAccessToken',
     'Set-MSRCApiKey'
 )
