@@ -1,0 +1,10 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\MsrcSecurityUpdates",
+    "\\src\\MsrcSecurityUpdates\\Public"
+  ],
+  "SelectedNode": "\\src\\MsrcSecurityUpdates\\Public\\Get-MsrcCvrfDocument.ps1",
+  "PreviewInSolutionExplorer": false
+}

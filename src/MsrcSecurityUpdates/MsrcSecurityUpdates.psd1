@@ -85,6 +85,9 @@ FunctionsToExport = @(
     'Get-MsrcCvrfCVESummary',
     'Get-MsrcCvrfDocument',
     'Get-MsrcCvrfExploitabilityIndex',
+    'Get-MsrcDownload',
+    'Get-MsrcDownloadDialog'
+    'Get-AllCookiesFromWebRequestSession'
     'Get-MsrcSecurityBulletinHtml',
     'Get-MsrcSecurityUpdate',
     'Get-MsrcVulnerabilityReportHtml',

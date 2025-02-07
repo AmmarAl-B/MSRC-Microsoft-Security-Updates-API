@@ -28,7 +28,7 @@ Foreach-Object {
 Describe ('Function: Get-MsrcSecurityUpdate (calls the /Updates API version {0})' -f $v) {
 
     It 'Get-MsrcSecurityUpdate - all' {
-        Get-MsrcSecurityUpdate |
+        Get-MsrcDownload -monthOfInterest "2024-Jan" |
         Should Not BeNullOrEmpty
     }
 

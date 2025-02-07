@@ -31,9 +31,9 @@ Process {
             $kb = $_
             #In older months, there won't be a subtype. Handle this so there are not empty ()'s
             if($kb.SubType){
-                $HTML_TO_RETURN += $('<a href="{0}" >{1} ({2})' -f $kb.URL, $kb.ID, $kb.SubType)
+                $HTML_TO_RETURN += $('{0}' -f $kb.URL)
             } else {
-                $HTML_TO_RETURN += $('<a href="{0}" >{1}' -f $kb.URL, $kb.ID)
+                $HTML_TO_RETURN += $('{0}' -f $kb.URL)
             }
         }
     }
