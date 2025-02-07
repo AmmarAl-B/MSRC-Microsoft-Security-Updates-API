@@ -35,6 +35,7 @@ Begin {
             }
         }
     }
+    $global:downloadLinks = $global:downloadLinks | Sort-Object -Unique
 }
 
 Process {
@@ -73,8 +74,11 @@ Process {
                 $Id = $Field.id
 
                 $DownloadURL = Get-MsrcDownloadDialog -UpdateID $Id
+                
+                $FileName = $DownloadURL.Replace('/', '').Replace('\', '').Replace(':','').Replace('"','').Replace('?','').Replace('<','').Replace('>','').Replace('*','').Replace('|','')
+                $FolderPath = "$env:USERPROFILE\Downloads\" + $($FileName)
 
-                Invoke-WebRequest $downloadURL -OutFile $env:USERPROFILE\Downloads\download.msu
+                Invoke-WebRequest $DownloadURL -OutFile $FolderPath
             }
         }
         catch {
