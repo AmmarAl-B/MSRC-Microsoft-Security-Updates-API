@@ -18,7 +18,7 @@ Function Get-MsrcDownload {
 [CmdletBinding()]
 Param (
     [Parameter(ParameterSetName='monthOfInterest')]
-    [ValidatePattern('^\d{4}-(Jan|Feb|Mer|Apr|Mai|Jun|Jul|Aug|Sep|Nob|Dez)$')]
+    [ValidatePattern('^\d{4}-(Jan|Feb|Mer|Apr|Mai|Jun|Jul|Aug|Sep|Nov|Dez)$')]
     [String]$monthOfInterest
 )
 
@@ -27,46 +27,39 @@ Begin {
     $affectedSoftware = Get-MsrcCvrfAffectedSoftware -Vulnerability $CVRFDoc.Vulnerability -ProductTree $CVRFDoc.ProductTree
 
     $global:downloadLinks = @()
-    $affectedSoftware.FullProductName | Sort-Object -Unique | ForEach-Object {
-        $PN = $_
-        $affectedSoftware | Where-Object { $_.FullProductName -eq $PN } | ForEach-Object {
-            if ($_.KBArticle.URL -ne "" -and -not($_.KBArticle.URL -Match "/download/dotnet/")) {
-                $global:downloadLinks += $_.KBArticle.URL 
-            }
+    $affectedSoftware | ForEach-Object {
+        if ($_.KBArticle.URL -match "catalog.update.microsoft" -and $_.FullProductName -match "Windows 11") {
+            $global:downloadLinks += $_.KBArticle.URL 
         }
     }
     $global:downloadLinks = $global:downloadLinks | Sort-Object -Unique
 }
 
 Process {
+    # Build the request hashtable for Invoke-WebRequest.
+    $WebRequest = @{
+        Headers = @{
+            'Accept' = {'application/xml'}
+        }
+        ErrorAction = 'Stop'
+    }
+
+    # Add proxy settings if required.
+    if ($global:msrcProxy) {
+        $WebRequest['Proxy'] = $global:msrcProxy
+    }
+    if ($global:msrcProxyCredential) {
+        $WebRequest['ProxyCredential'] = $global:msrcProxyCredential
+    }
+    if ($global:MSRCAdalAccessToken) {
+        $WebRequest.Headers['Authorization'] = $global:MSRCAdalAccessToken.CreateAuthorizationHeader()
+    }
+
     foreach ($currentLink in $global:downloadLinks) {
 
-        # Build the request hashtable for Invoke-WebRequest.
-        $WebRequest = @{
-            Uri         = $currentLink
-            Headers = @{
-                'Accept' = {'application/xml'}
-            }
-            ErrorAction = 'Stop'
-        }
-
-        $Session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-
-        # Add proxy settings if required.
-        if ($global:msrcProxy) {
-            $WebRequest['Proxy'] = $global:msrcProxy
-        }
-        if ($global:msrcProxyCredential) {
-            $WebRequest['ProxyCredential'] = $global:msrcProxyCredential
-        }
-        if ($global:MSRCAdalAccessToken) {
-            $WebRequest.Headers['Authorization'] = $global:MSRCAdalAccessToken.CreateAuthorizationHeader()
-        }
-
         try {
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-            $Response = Invoke-WebRequest @WebRequest -WebSession $Session
+            # [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls13
+            $Response = Invoke-WebRequest @WebRequest -Uri $currentLink -UseBasicParsing
 
             $InputFields = $Response.InputFields | Where-Object { $_.class -Match "flatBlueButtonDownload"}
 
@@ -78,7 +71,7 @@ Process {
                 $FileName = $DownloadURL.Replace('/', '').Replace('\', '').Replace(':','').Replace('"','').Replace('?','').Replace('<','').Replace('>','').Replace('*','').Replace('|','')
                 $FolderPath = "$env:USERPROFILE\Downloads\" + $($FileName)
 
-                Invoke-WebRequest $DownloadURL -OutFile $FolderPath
+                Invoke-WebRequest $DownloadURL -OutFile $FolderPath -UseBasicParsing -ErrorAction Stop
             }
         }
         catch {

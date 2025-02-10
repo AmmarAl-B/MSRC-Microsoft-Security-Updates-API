@@ -70,12 +70,9 @@ Process {
         }
 
         try {
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls13
+            # [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls13
 
-            $Response = Invoke-WebRequest @WebRequest -Method POST
-
-            $parsed = $Response.ParsedHtml
-            $parsed | Out-File "C:\tmp\parsed.txt"
+            $Response = Invoke-WebRequest @WebRequest -Method POST -UseBasicParsing
 
             $pattern = "downloadInformation\[0\]\.files\[0\]\.url\s*=\s*'([^']+)'"
 
